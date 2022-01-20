@@ -20,7 +20,7 @@ async function find() { // EXERCISE A
   const rows = await db('schemes as sch')
     .leftJoin('steps as st', 'sch.scheme_id', 'st.scheme_id')
     .groupBy('sch.scheme_id')
-    .select('sch.scheme_id', 'sch.scheme_name', 'number_of_steps')
+    .select('sch.*')
     .count('st.step_id as number_of_steps')
   return rows
 }
