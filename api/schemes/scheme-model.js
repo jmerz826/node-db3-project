@@ -25,7 +25,7 @@ async function find() { // EXERCISE A
   return rows
 }
 
-function findById(scheme_id) { // EXERCISE B
+async function findById(scheme_id) { // EXERCISE B
   /*
     1B- Study the SQL query below running it in SQLite Studio against `data/schemes.db3`:
 
@@ -91,6 +91,24 @@ function findById(scheme_id) { // EXERCISE B
         "steps": []
       }
   */
+  const raw = await db('schemes as sch')
+    .leftJoin('steps as st', 'sch.scheme_id', 'st.scheme_id')
+    .where('sch.scheme_id', scheme_id)
+    .select('sch.scheme_name', 'st.*', 'sch.scheme_id')
+    .orderBy('st.step_number')
+  const result = {
+    scheme_id: raw[0].scheme_id,
+    scheme_name: raw[0].scheme_name,
+    steps: raw[0].step_id ?
+            raw.map(obj => {
+              return ({
+                step_id: obj.step_id,
+                step_number: obj.step_number,
+                instructions: obj.instructions
+              })
+            }) : []
+  }
+  return result
 }
 
 function findSteps(scheme_id) { // EXERCISE C
